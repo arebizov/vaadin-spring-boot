@@ -110,7 +110,7 @@ public class VaadinUI extends UI {
             return;
         }*/
 
-        String query = "select top 100 " +
+        String query = "select top 300 " +
                 "t.id as id1," +
                 " t.correct_address as correct, " +
                 " t.clean_address as clean_ad, " +
