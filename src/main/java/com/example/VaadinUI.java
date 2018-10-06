@@ -1,19 +1,18 @@
 package com.example;
+import com.example.dao.ClientRepository;
 import com.example.dao.UserRepository;
 import com.example.model.User;
 import com.example.page.ClientGrid;
-import com.example.page.ClientGrid;
 import com.example.page.MainGrid;
 import com.example.page.Sample;
+import com.example.ui.ClientEditor;
 import com.example.ui.UserEditor;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.StringUtils;
@@ -28,10 +27,12 @@ import java.sql.SQLException;
 public class VaadinUI extends UI {
 
     private final UserRepository repo;
+    private final ClientRepository repo1;
 
     final Grid<User> grid;
 
     private final UserEditor editor;
+    private final ClientEditor editor1;
 
     final TextField filterByaddress;
     final TextField filterByCleanAddress;
@@ -42,9 +43,11 @@ public class VaadinUI extends UI {
 
     private final Button addNewBtn;
 
-    public VaadinUI(UserRepository repo, UserEditor editor) {
+    public VaadinUI(UserRepository repo, ClientRepository repo1, UserEditor editor, ClientEditor editor1) {
         this.repo = repo;
+        this.repo1 = repo1;
         this.editor = editor;
+        this.editor1 = editor1;
         this.grid = new Grid<>( User.class );
         this.filterByaddress = new TextField();
         this.filterByCleanAddress = new TextField();
@@ -81,7 +84,7 @@ public class VaadinUI extends UI {
 
 
         Button thirtyButton = new Button( "Client" );
-        thirdButton.addClickListener( event -> hPanel.setSecondComponent(  new ClientGrid( repo, editor, jdbcTemplate ) ) );
+        thirdButton.addClickListener( event -> hPanel.setSecondComponent(  new ClientGrid( repo1, editor1, jdbcTemplate ) ) );
         VerticalLayout buttonLayou = new VerticalLayout(  toggleButton, backButton, thirdButton, thirtyButton);
         hPanel.setFirstComponent( buttonLayou );
         hPanel.setSecondComponent( mainLayout );

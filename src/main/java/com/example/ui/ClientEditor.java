@@ -1,5 +1,6 @@
 package com.example.ui;
 
+import com.example.dao.ClientRepository;
 import com.example.dao.UserRepository;
 import com.example.model.Client;
 import com.vaadin.data.Binder;
@@ -27,7 +28,7 @@ public class ClientEditor extends VerticalLayout {
     JdbcTemplate jdbcTemplate;
     //JdbcTemplate jdbcTemplate1;
 
-    private final UserRepository repository;
+    private final ClientRepository repository;
 
     private Client client;
 
@@ -46,7 +47,7 @@ public class ClientEditor extends VerticalLayout {
     Binder<Client> binder = new Binder<Client>(Client.class);
 
     @Autowired
-    public ClientEditor(UserRepository repository) {
+    public ClientEditor(ClientRepository repository) {
         this.repository = repository;
         addressPharmacy.setWidth( "500px" );
         addressPharmacy.setId( "addressPharmacy" );

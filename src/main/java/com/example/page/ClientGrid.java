@@ -1,5 +1,6 @@
 package com.example.page;
 
+import com.example.dao.ClientRepository;
 import com.example.dao.UserRepository;
 import com.example.model.Client;
 import com.example.ui.BudgetCombobox;
@@ -16,7 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ClientGrid extends VerticalLayout {
-    private final UserRepository repo;
+    private final ClientRepository repo;
 
     final Grid<Client> grid;
 
@@ -31,9 +32,9 @@ public class ClientGrid extends VerticalLayout {
     private final Button addNewBtn;
 
 
-    public ClientGrid(UserRepository repo, ClientEditor editor, JdbcTemplate jdbcTemplate) {
+    public ClientGrid(ClientRepository repo1, ClientEditor editor, JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.repo = repo ;
+        this.repo = repo1 ;
         this.editor = editor;
         this.grid = new Grid<>( Client.class );
         this.filterByaddress = new TextField();

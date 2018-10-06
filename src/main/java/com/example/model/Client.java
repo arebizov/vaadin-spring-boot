@@ -5,7 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-public class Client extends User {
+public class Client  {
 
 
     @javax.persistence.Id
