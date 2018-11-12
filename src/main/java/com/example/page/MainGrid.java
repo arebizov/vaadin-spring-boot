@@ -1,7 +1,7 @@
 package com.example.page;
 
 import com.example.dao.UserRepository;
-import com.example.dictionary.Dict;
+
 import com.example.model.User;
 import com.example.ui.BudgetCombobox;
 import com.example.ui.UserEditor;

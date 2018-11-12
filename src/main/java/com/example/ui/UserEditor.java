@@ -27,7 +27,6 @@ public class UserEditor extends VerticalLayout {
     @Autowired
     JdbcTemplate jdbcTemplate;
     //JdbcTemplate jdbcTemplate1;
-
     private final UserRepository repository;
 
     /**
@@ -72,7 +71,7 @@ public class UserEditor extends VerticalLayout {
         save.addClickListener( e -> {
             repository.save( user );
             jdbcTemplate.update( "update pl.net2 set status_validation=? where id = ?", 5, user.getId() );
-            jdbcTemplate.update( "update pl.net2 set kladr_code=? where id = ?", null, user.getId() );
+            jdbcTemplate.update( "update pl.net2 set id_kladr=? where id = ?", "00000000000000000", user.getId() );
             jdbcTemplate.update( "update pl.net2 set correct_address=? where name in (select name from pl.net2 where id=?)"
                     ,user.getaddressPharmacy()
                    ,user.getId()

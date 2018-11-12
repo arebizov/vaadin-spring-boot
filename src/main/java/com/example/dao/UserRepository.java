@@ -11,4 +11,5 @@ public interface UserRepository  extends JpaRepository<User, Long> {
         //List<User> findByRegionLikeIgnoreCase(String lastName);
         //List<User> (String region, String cleanAddress, String addressPharmacy);
         //List<User> findByRegionLikeIgnoreCaseAndCleanAddressLikeIgnoreCaseAndAddressPharmacyLikeIgnoreCase( String addressPharmacy,String cleanAddress, String region);
+
 }

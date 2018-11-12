@@ -1,8 +1,9 @@
+
+
 package com.example.ui;
 
-import com.example.dao.ClientRepository;
-import com.example.dao.UserRepository;
-import com.example.model.Client;
+import com.example.dao.CityRepository;
+import com.example.model.City;
 import com.vaadin.data.Binder;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
@@ -21,40 +22,43 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 @SpringComponent
 @UIScope
-public class ClientEditor extends VerticalLayout {
+public class CityEditor extends VerticalLayout {
 
 
     @Autowired
     JdbcTemplate jdbcTemplate;
     //JdbcTemplate jdbcTemplate1;
 
-    private final ClientRepository repository;
+    private final CityRepository repository;
 
-    private Client client;
+    /**
+     * The currently edited user
+     */
+    private City city;
 
     /* Fields to edit properties in Customer entity */
-    TextField addressPharmacy = new TextField("write correct address");
-
-    TextField cleanAddress = new TextField("address name");
+    //TextField city = new TextField("write fields forces");
+    //TextField originalAdress = new TextField("System.out.println(user.getId())");
+    TextField mp = new TextField("write fields forces");
 
     /* Action buttons */
     Button save = new Button("Save", VaadinIcons.CHECK);
-    Button cancel = new Button("Cancel");
+    Button cancel = new Button("Cancel" );
     Button delete = new Button("Delete", VaadinIcons.TRASH);
     CssLayout actions = new CssLayout(save, cancel);
     //CssLayout actions = new CssLayout(save, cancel, delete);
 
-    Binder<Client> binder = new Binder<Client>(Client.class);
+    Binder<City> binder = new Binder<>(City.class);
 
     @Autowired
-    public ClientEditor(ClientRepository repository) {
+    public CityEditor(CityRepository repository) {
         this.repository = repository;
-        addressPharmacy.setWidth( "500px" );
-        addressPharmacy.setId( "addressPharmacy" );
-        cleanAddress.setWidth( "500px" );
+        mp.setWidth( "500px" );
+        mp.setId( "mp" );
+
 
         //addComponents(correctAddress, cleanAddress, actions);
-        addComponents(addressPharmacy, actions);
+        addComponents(mp, actions);
 
         // bind using naming convention
         binder.bindInstanceFields(this);
@@ -67,16 +71,12 @@ public class ClientEditor extends VerticalLayout {
 
         // wire action buttons to save, delete and reset
         save.addClickListener( e -> {
-            repository.save( client );
-            jdbcTemplate.update( "update pl.net2 set status_validation=? where id = ?", 5, client.getId() );
-            jdbcTemplate.update( "update pl.net2 set kladr_code=? where id = ?", null, client.getId() );
-            jdbcTemplate.update( "update pl.net2 set correct_address=? where name in (select name from pl.net2 where id=?)"
-                    ,client.getaddressPharmacy()
-                    ,client.getId()
-            );
+            repository.save( city );
+
+
         } );
-        delete.addClickListener(e -> repository.delete(client));
-        cancel.addClickListener(e -> editCustomer(client));
+        delete.addClickListener(e -> repository.delete(city));
+        cancel.addClickListener(e -> editCustomer(city));
         setVisible(false);
     }
 
@@ -85,7 +85,7 @@ public class ClientEditor extends VerticalLayout {
         void onChange();
     }
 
-    public final void editCustomer(com.example.model.Client c) {
+    public final void editCustomer(City c) {
         if (c == null) {
             setVisible(true);
             return;
@@ -93,24 +93,24 @@ public class ClientEditor extends VerticalLayout {
         final boolean persisted = c.getId() != null;
         if (persisted) {
             // Find fresh entity for editing
-            client = repository.findById(c.getId()).get();
+            city = repository.findById(c.getId()).get();
         }
         else {
-            client = c;
+            city = c;
         }
         cancel.setVisible(persisted);
 
         // Bind actStatusType properties to similarly named fields
         // Could also use annotation or "manual binding" or programmatically
         // moving values from fields to entities before saving
-        binder.setBean(client);
+        binder.setBean(city);
 
         setVisible(true);
 
         // A hack to ensure the whole form is visible
         save.focus();
         // Select all text in actStatusName field automatically
-        addressPharmacy.selectAll();
+        mp.selectAll();
     }
 
     public void setChangeHandler(ChangeHandler h) {
@@ -121,3 +121,4 @@ public class ClientEditor extends VerticalLayout {
     }
 
 }
+
