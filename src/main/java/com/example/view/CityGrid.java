@@ -1,4 +1,4 @@
-package com.example.page;
+package com.example.view;
 import com.example.dao.CityRepository;
 import com.example.model.City;
 
@@ -48,7 +48,6 @@ public class CityGrid extends VerticalLayout {
         filterByaddress.setWidth( "200px" );
         filterByCleanAddress.setWidth( "200px" );
         filterByRegion.setWidth( "200px" );
-        BudgetCombobox combo = new BudgetCombobox();
         HorizontalLayout actions = new HorizontalLayout( filterByaddress, filterByCleanAddress, filterByRegion );
 
         addComponents( actions, grid, editor );
@@ -81,10 +80,10 @@ public class CityGrid extends VerticalLayout {
 
         // Listen changes made by the editor, refresh data from backend
         editor.setChangeHandler( () -> {
-            editor.setVisible( false );
+          editor.setVisible( false );
             listUsers( filterByaddress.getValue(), filterByCleanAddress.getValue(), filterByRegion.getValue() );
-            //listUsers(null, null, null );
-        } );
+         listUsers(null, null, null );
+       } );
         listUsers( null, null, null );
 
     }

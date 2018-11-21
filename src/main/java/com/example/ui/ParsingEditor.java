@@ -1,11 +1,12 @@
 package com.example.ui;
 
-import com.example.dao.UserRepository;
-import com.example.model.User;
+import com.example.dao.ParsingRepository;
+
+import com.example.model.Parsing;
+
 import com.vaadin.data.Binder;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.shared.Registration;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Button;
@@ -21,19 +22,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 @SpringComponent
 @UIScope
-public class UserEditor extends VerticalLayout {
+public class ParsingEditor extends VerticalLayout {
 
 
     @Autowired
     JdbcTemplate jdbcTemplate;
     //JdbcTemplate jdbcTemplate1;
-
-    private final UserRepository repository;
+    private final ParsingRepository repository;
 
     /**
      * The currently edited user
      */
-    private com.example.model.User user;
+    private Parsing parsing;
 
     /* Fields to edit properties in Customer entity */
     TextField addressPharmacy = new TextField("write correct address");
@@ -47,14 +47,14 @@ public class UserEditor extends VerticalLayout {
     CssLayout actions = new CssLayout(save, cancel);
     //CssLayout actions = new CssLayout(save, cancel, delete);
 
-    Binder<User> binder = new Binder<>(User.class);
+    Binder<Parsing> binder = new Binder<>(Parsing.class);
 
     @Autowired
-    public UserEditor(UserRepository repository) {
+    public ParsingEditor(ParsingRepository repository) {
         this.repository = repository;
-        addressPharmacy.setWidth( "500px" );
-        addressPharmacy.setId( "addressPharmacy" );
-        cleanAddress.setWidth( "500px" );
+        //addressPharmacy.setWidth( "500px" );
+        //addressPharmacy.setId( "addressPharmacy" );
+        //cleanAddress.setWidth( "500px" );
 
         //addComponents(correctAddress, cleanAddress, actions);
         addComponents(addressPharmacy, actions);
@@ -69,20 +69,17 @@ public class UserEditor extends VerticalLayout {
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
         // wire action buttons to save, delete and reset
-        save.addClickListener( e -> {
-            repository.save( user );
-            //jdbcTemplate.update( "update pl.net2 set status_validation=? where id = ?", 5, user.getId() );
-            //jdbcTemplate.update( "update pl.net2 set kladr_code=? where id = ?", null, user.getId() );
-            //jdbcTemplate.update( "update pl.net2 set correct_address=? where name in (select name from pl.net2 where id=?)"
-            jdbcTemplate.update( "update etl.parsing set status_validation=? where id = ?", 5, user.getId() );
-            jdbcTemplate.update( "update etl.parsing set correct_address=? where name in (select name from etl.parsing where id=?)"
-
-                    ,user.getaddressPharmacy()
-                    ,user.getId()
-            );
-        } );
-        delete.addClickListener(e -> repository.delete(user));
-        cancel.addClickListener(e -> editCustomer(user));
+        //save.addClickListener( e -> {
+         //   repository.save( pharmacy );
+         //   jdbcTemplate.update( "update pl.net2 set status_validation=? where id = ?", 5, pharmacy.getId() );
+         //   jdbcTemplate.update( "update pl.net2 set id_kladr=? where id = ?", "00000000000000000", pharmacy.getId() );
+         //   jdbcTemplate.update( "update pl.net2 set correct_address=? where name in (select name from pl.net2 where id=?)"
+         //           ,pharmacy.getaddressPharmacy()
+          //         ,pharmacy.getId()
+          //  );
+          //                      } );
+        delete.addClickListener(e -> repository.delete(parsing));
+        cancel.addClickListener(e -> editCustomer(parsing));
         setVisible(false);
     }
 
@@ -91,7 +88,7 @@ public class UserEditor extends VerticalLayout {
         void onChange();
     }
 
-    public final void editCustomer(com.example.model.User c) {
+    public final void editCustomer(Parsing c) {
         if (c == null) {
             setVisible(true);
             return;
@@ -99,17 +96,17 @@ public class UserEditor extends VerticalLayout {
         final boolean persisted = c.getId() != null;
         if (persisted) {
             // Find fresh entity for editing
-            user = repository.findById(c.getId()).get();
+            parsing = repository.findById(c.getId()).get();
         }
         else {
-            user = c;
+            parsing = c;
         }
         cancel.setVisible(persisted);
 
         // Bind actStatusType properties to similarly named fields
         // Could also use annotation or "manual binding" or programmatically
         // moving values from fields to entities before saving
-        binder.setBean(user);
+        binder.setBean(parsing);
 
         setVisible(true);
 

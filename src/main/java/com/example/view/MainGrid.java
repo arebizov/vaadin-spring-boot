@@ -1,10 +1,10 @@
-package com.example.page;
-import com.example.dao.RegionRepository;
-import com.example.dictionary.Dict;
-import com.example.model.Region;
+package com.example.view;
+
+import com.example.dao.UserRepository;
+
+import com.example.model.User;
 import com.example.ui.BudgetCombobox;
-import com.example.ui.CityEditor;
-import com.example.ui.RegionEditor;
+import com.example.ui.UserEditor;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.*;
@@ -18,13 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class RegionGrid extends VerticalLayout {
+public class MainGrid extends VerticalLayout {
 
-    private final RegionRepository repo;
+    private final UserRepository repo;
 
-    final Grid<Region> grid;
+    final Grid<User> grid;
 
-    private final RegionEditor editor;
+    private final UserEditor editor;
 
     final TextField filterByaddress;
     final TextField filterByCleanAddress;
@@ -34,11 +34,11 @@ public class RegionGrid extends VerticalLayout {
 
     private final Button addNewBtn;
 
-    public RegionGrid(RegionRepository repo, RegionEditor editor, JdbcTemplate jdbcTemplate) {
+    public MainGrid(UserRepository repo, UserEditor editor, JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.repo = repo ;
         this.editor = editor;
-        this.grid = new Grid<>( Region.class );
+        this.grid = new Grid<>( User.class );
         this.filterByaddress = new TextField();
         this.filterByCleanAddress = new TextField();
         this.filterByRegion = new TextField();
@@ -57,7 +57,7 @@ public class RegionGrid extends VerticalLayout {
         grid.setHeight( 400, Unit.PIXELS );
         grid.setWidth( "100%" );
 
-        grid.setColumns( "region", "mp", "id_fo" );
+        grid.setColumns( "addressPharmacy", "cleanAddress", "region", "pharmacyNet" );
         filterByaddress.setPlaceholder( "Filter by address" );
         filterByCleanAddress.setPlaceholder( "Filter by clean address" );
         filterByRegion.setPlaceholder( "Filter by Region" );
@@ -79,7 +79,7 @@ public class RegionGrid extends VerticalLayout {
 
 
         // Instantiate and edit new Customer the new button is clicked
-        //addNewBtn.addClickListener( e -> editor.editCustomer( new User( null ) ) );
+        addNewBtn.addClickListener( e -> editor.editCustomer( new User( null, "", "", "", "" ) ) );
 
         // Listen changes made by the editor, refresh data from backend
         editor.setChangeHandler( () -> {
@@ -92,7 +92,7 @@ public class RegionGrid extends VerticalLayout {
     }
 
 
-    void listUsers(String region, String mp, String id_fo) {
+    void listUsers(String correctAddress, String cleanAddress, String region) {
         /*
     }
         if( StringUtils.isEmpty(region) & StringUtils.isEmpty(cleanAddress) & !StringUtils.isEmpty(correctAddress)){
@@ -108,38 +108,40 @@ public class RegionGrid extends VerticalLayout {
             return;
         }*/
 
-        String query = "select top 50 " +
+        String query = "select top 300 " +
                 "t.id as id1," +
-                " t.region as region1, " +
-                " t.mp as mp1, " +
-                " t.id_fo as id_fo1 from ETL.D_region as t where 1=1";
+                " t.correct_address as correct, " +
+                " t.clean_address as clean_ad, " +
+                " t.pharmacy_net_name as pharmacy_net, " +
+                "t.region as region4 from pl.net2 as t where 1=1";
+        if (!StringUtils.isEmpty( correctAddress )) query += " and upper(t.correct_address) like upper(?) ";
+        if (!StringUtils.isEmpty( cleanAddress )) query += " and upper(t.clean_address) like upper(?) ";
         if (!StringUtils.isEmpty( region )) query += " and upper(t.region) like upper(?) ";
-        if (!StringUtils.isEmpty( mp )) query += " and upper(t.mp) like upper(?) ";
-        if (!StringUtils.isEmpty( id_fo )) query += " and upper(t.id_fo1) like upper(?) ";
         grid.setItems( jdbcTemplate.query(
                 query,
                 ps -> {
                     int pCount = 1;
+                    if (!StringUtils.isEmpty( correctAddress )) {
+                        ps.setString( pCount, "%" + correctAddress + "%" );
+                        pCount++;
+                    }
+                    if (!StringUtils.isEmpty( cleanAddress )) {
+                        ps.setString( pCount, "%" + cleanAddress + "%" );
+                        pCount++;
+                    }
                     if (!StringUtils.isEmpty( region )) {
                         ps.setString( pCount, "%" + region + "%" );
-                        pCount++;
-                    }
-                    if (!StringUtils.isEmpty( mp )) {
-                        ps.setString( pCount, "%" + mp + "%" );
-                        pCount++;
-                    }
-                    if (!StringUtils.isEmpty( id_fo )) {
-                        ps.setString( pCount, "%" + id_fo + "%" );
                     }
                 },
-                new RowMapper<Region>() {
-                    public Region mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        Region region = new Region();
-                        region.setId( rs.getLong( "id1" ) );
-                        region.setRegion (rs.getString( "region1" ) );
-                        region.setMp( rs.getString( "mp1" ) );
-                        region.setId_fo( rs.getString( "id_fo1" ) );
-                        return region;
+                new RowMapper<User>() {
+                    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        User user = new User();
+                        user.setId( rs.getLong( "id1" ) );
+                        user.setaddressPharmacy( rs.getString( "correct" ) );
+                        user.setCleanAddress( rs.getString( "clean_ad" ) );
+                        user.setPharmacyNet( rs.getString( "pharmacy_net" ) );
+                        user.setRegion( rs.getString( "region4" ) );
+                        return user;
                     }
                 } )
         );

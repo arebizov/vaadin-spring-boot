@@ -22,6 +22,10 @@ public class Region {
     private String id_fo;
 
 
+    @Column(name="code_region")
+    private String code_region;
+
+
     public Long getId() {
         return Id;
     }
@@ -54,6 +58,14 @@ public class Region {
         this.id_fo = id_fo;
     }
 
+    public String getCode_region() {
+        return code_region;
+    }
+
+    public void setCode_region(String code_region) {
+        this.code_region = code_region;
+    }
+
     @Override
     public String toString() {
         return "Region{" +
@@ -61,6 +73,7 @@ public class Region {
                 ", region='" + region + '\'' +
                 ", mp='" + mp + '\'' +
                 ", id_fo='" + id_fo + '\'' +
+                ", code_region='" + code_region + '\'' +
                 '}';
     }
 }

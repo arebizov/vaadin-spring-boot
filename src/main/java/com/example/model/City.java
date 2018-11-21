@@ -21,6 +21,9 @@ public class City {
     @Column(name="code_region")
     private String code_region;
 
+
+    //@ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "code_region", nullable = false) private Region region;
+
     public Long getId() {
         return Id;
     }

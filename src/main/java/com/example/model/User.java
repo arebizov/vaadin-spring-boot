@@ -2,8 +2,8 @@ package com.example.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name="NET2", schema = "PL")
-
+//@Table(name="NET2", schema = "PL")
+@Table(name="PARSING", schema = "ETL")
 public class User {
 
     @Id
